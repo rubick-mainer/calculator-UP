@@ -1,6 +1,7 @@
 from PyQt5 import QtWidgets, QtGui
 from PyQt5.QtWidgets import QMessageBox
 import re
+import math
 
 class MyWindow(QtWidgets.QWidget):
     def __init__(self, *args, **kwargs):
@@ -33,29 +34,10 @@ class MyWindow(QtWidgets.QWidget):
         self.firsk = QtWidgets.QPushButton('(')
         self.secsk = QtWidgets.QPushButton(')')
         self.pi = QtWidgets.QPushButton('π')
+        self.fact = QtWidgets.QPushButton('n!')
+        self.step = QtWidgets.QPushButton('x^y')
+        self.eee = QtWidgets.QPushButton('e')
 
-
-        # self.btn.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
-        # self.btn1.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
-        # self.btn2.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
-        # self.btn3.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
-        # self.btn4.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
-        # self.btn5.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
-        # self.btn6.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
-        # self.btn7.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
-        # self.btn8.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
-        # self.btn9.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
-        # self.dot.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
-        # self.equals.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
-        # self.plus.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
-        # self.minus.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
-        # self.multiply.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
-        # self.divide.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
-        # self.erase.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
-        # self.percent.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
-        # self.clear.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
-        # self.expand.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
-        # self.screen.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Maximum)
         self.mainlayout = QtWidgets.QGridLayout()
 
         self.screenlayout = QtWidgets.QVBoxLayout()
@@ -98,19 +80,55 @@ class MyWindow(QtWidgets.QWidget):
         self.minus.clicked.connect(self.minusing)
         self.multiply.clicked.connect(self.multy)
         self.divide.clicked.connect(self.delit)
-        #self.percent.clicked.connect(self.plusminus)
         self.dot.clicked.connect(self.dotq)
         self.erase.clicked.connect(self.erasing)
         self.equals.clicked.connect(self.ravno)
         self.expand.clicked.connect(self.inginer)
+
+        self.firsk.clicked.connect(self.skob1)
+        self.secsk.clicked.connect(self.skob2)
+        self.fact.clicked.connect(self.fakt)
+        self.step.clicked.connect(self.stepen)
+        self.pi.clicked.connect(self.ps)
+        self.eee.clicked.connect(self.eeee)
 
         self.setLayout(self.screenlayout)
 
     def inginer(self):
         self.mainlayout.addWidget(self.firsk, 1, 4)
         self.mainlayout.addWidget(self.secsk, 1, 5)
+        self.mainlayout.addWidget(self.fact, 2, 4)
+        self.mainlayout.addWidget(self.step, 2, 5)
+        self.mainlayout.addWidget(self.pi, 3, 4)
+        self.mainlayout.addWidget(self.eee, 3, 5)
 
-    
+    def eeee(self):
+        self.screen.setText(self.screen.text() + '2.7182818284')
+
+    def ps(self):
+        i = str(math.pi)
+        self.screen.setText(self.screen.text() + i)
+
+    def stepen(self):
+        if self.screen.text() == "":
+            QtWidgets.QMessageBox.about(QtWidgets.QWidget(), "Ошибка", "Сначала введите значение")
+        else:
+            self.screen.setText(self.screen.text() + "**")
+
+    def skob1(self):
+        self.screen.setText(self.screen.text() + '(')
+
+    def skob2(self):
+        self.screen.setText(self.screen.text() + ')')
+
+    def fakt(self):
+        try:
+            i = int(self.screen.text())
+            i = math.factorial(i)
+            self.screen.setText(str(i))
+        except ValueError:
+            QtWidgets.QMessageBox.about(QtWidgets.QWidget(), "Ошибка", "невозможно высчитать факториал")
+            return
 
     def zerobtn(self):
         text = self.screen.text()
@@ -260,8 +278,14 @@ class MyWindow(QtWidgets.QWidget):
             return
         elif text[-1] in {'-', '+', '*', '/'}:
             return
-        self.screen.setText(str(eval(self.screen.text())))
-
+        elif text.count('(') != text.count(')'):
+            QtWidgets.QMessageBox.about(QtWidgets.QWidget(), "Ошибка", "Имеется незакрытая скобка")
+            return
+        try:
+            self.screen.setText(str(eval(self.screen.text())))
+        except ZeroDivisionError:
+            QtWidgets.QMessageBox.about(QtWidgets.QWidget(), "Ошибка", "деление на ноль невозможно")
+            return
 
 if __name__ == "__main__":
     from sys import argv, exit
