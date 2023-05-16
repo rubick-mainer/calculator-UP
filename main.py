@@ -1,5 +1,6 @@
 from PyQt5 import QtWidgets, QtGui
 from PyQt5.QtWidgets import QMessageBox
+from qt_material import apply_stylesheet
 import re
 import math
 
@@ -37,6 +38,10 @@ class MyWindow(QtWidgets.QWidget):
         self.fact = QtWidgets.QPushButton('n!')
         self.step = QtWidgets.QPushButton('x^y')
         self.eee = QtWidgets.QPushButton('e')
+        self.tenX = QtWidgets.QPushButton('10^x')
+        self.viktor = QtWidgets.QPushButton('√x')
+        self.modul = QtWidgets.QPushButton('|x|')
+        self.ln = QtWidgets.QPushButton('ln')
 
         self.mainlayout = QtWidgets.QGridLayout()
 
@@ -91,6 +96,10 @@ class MyWindow(QtWidgets.QWidget):
         self.step.clicked.connect(self.stepen)
         self.pi.clicked.connect(self.ps)
         self.eee.clicked.connect(self.eeee)
+        self.tenX.clicked.connect(self.tenstep)
+        self.viktor.clicked.connect(self.koren)
+        self.modul.clicked.connect(self.moduul)
+        self.ln.clicked.connect(self.lnn)
 
         self.setLayout(self.screenlayout)
 
@@ -101,17 +110,48 @@ class MyWindow(QtWidgets.QWidget):
         self.mainlayout.addWidget(self.step, 2, 5)
         self.mainlayout.addWidget(self.pi, 3, 4)
         self.mainlayout.addWidget(self.eee, 3, 5)
+        self.mainlayout.addWidget(self.tenX, 4, 4)
+        self.mainlayout.addWidget(self.viktor, 4, 5)
+        self.mainlayout.addWidget(self.modul, 5, 4)
+        self.mainlayout.addWidget(self.ln, 5, 5)
+
+    def lnn(self):
+        i = float(self.screen.text())
+        j = math.log(i, 2.7182818284)
+        self.screen.setText(str(j))
+
+    def moduul(self):
+        i = float(self.screen.text())
+        if i <= -1:
+            i *= -1
+            self.screen.setText(str(i))
+        else:
+            return
+
+    def koren(self):
+        i = float(self.screen.text())
+        j = math.sqrt(i)
+        self.screen.setText(str(j))
+
+    def tenstep(self):
+        if len(self.screen.text()) < 1:
+            return
+        else:
+            i = float(self.screen.text())
+            j = i**10
+            self.screen.setText(str(j))
+
 
     def eeee(self):
-        self.screen.setText(self.screen.text() + '2.7182818284')
+        self.screen.setText('2.7182818284')
 
     def ps(self):
         i = str(math.pi)
-        self.screen.setText(self.screen.text() + i)
+        self.screen.setText(i)
 
     def stepen(self):
-        if self.screen.text() == "":
-            QtWidgets.QMessageBox.about(QtWidgets.QWidget(), "Ошибка", "Сначала введите значение")
+        if len(self.screen.text()) < 1:
+            return
         else:
             self.screen.setText(self.screen.text() + "**")
 
@@ -122,6 +162,8 @@ class MyWindow(QtWidgets.QWidget):
         self.screen.setText(self.screen.text() + ')')
 
     def fakt(self):
+        if len(self.screen.text()) < 1:
+            return
         try:
             i = int(self.screen.text())
             i = math.factorial(i)
@@ -129,6 +171,8 @@ class MyWindow(QtWidgets.QWidget):
         except ValueError:
             QtWidgets.QMessageBox.about(QtWidgets.QWidget(), "Ошибка", "невозможно высчитать факториал")
             return
+        except OverflowError:
+            QtWidgets.QMessageBox.about(QtWidgets.QWidget(), "Ошибка", "число слишком большое, калькулятору плохо")
 
     def zerobtn(self):
         text = self.screen.text()
@@ -239,7 +283,7 @@ class MyWindow(QtWidgets.QWidget):
     def minusing(self):
         qwe = len(self.screen.text())
         if len(self.screen.text()) == 0:
-            return
+            self.screen.setText("-")
         elif self.screen.text()[qwe - 1] == "-":
             return
         else:
@@ -290,6 +334,7 @@ class MyWindow(QtWidgets.QWidget):
 if __name__ == "__main__":
     from sys import argv, exit
     app = QtWidgets.QApplication(argv)
+    apply_stylesheet(app, theme='dark_cyan.xml')
     window = MyWindow()
     window.setObjectName("MainWindow")
     window.show()
